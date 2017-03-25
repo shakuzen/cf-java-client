@@ -16,8 +16,8 @@
 
 package org.cloudfoundry.operations.applications;
 
+import org.cloudfoundry.operations.AbstractOperationsTest;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +28,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public final class ApplicationManifestUtilsTest {
+public final class ApplicationManifestUtilsTest extends AbstractOperationsTest {
 
     @Test
     public void read() throws IOException {
@@ -85,7 +85,7 @@ public final class ApplicationManifestUtilsTest {
                 .service("alpha-instance-2")
                 .build());
 
-        List<ApplicationManifest> actual = ApplicationManifestUtils.read(new ClassPathResource("fixtures/manifest-alpha.yml").getFile().toPath());
+        List<ApplicationManifest> actual = ApplicationManifestUtils.read(getClasspathResource("fixtures/manifest-alpha.yml"));
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -154,7 +154,7 @@ public final class ApplicationManifestUtilsTest {
                 .service("alternate-instance-2")
                 .build());
 
-        List<ApplicationManifest> actual = ApplicationManifestUtils.read(new ClassPathResource("fixtures/manifest-charlie.yml").getFile().toPath());
+        List<ApplicationManifest> actual = ApplicationManifestUtils.read(getClasspathResource("fixtures/manifest-charlie.yml"));
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -243,7 +243,7 @@ public final class ApplicationManifestUtilsTest {
                 .service("delta-instance-2")
                 .build());
 
-        List<ApplicationManifest> actual = ApplicationManifestUtils.read(new ClassPathResource("fixtures/manifest-delta.yml").getFile().toPath());
+        List<ApplicationManifest> actual = ApplicationManifestUtils.read(getClasspathResource("fixtures/manifest-delta.yml"));
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -364,7 +364,7 @@ public final class ApplicationManifestUtilsTest {
                 .service("beta-instance-2")
                 .build());
 
-        List<ApplicationManifest> actual = ApplicationManifestUtils.read(new ClassPathResource("fixtures/manifest-beta.yml").getFile().toPath());
+        List<ApplicationManifest> actual = ApplicationManifestUtils.read(getClasspathResource("fixtures/manifest-beta.yml"));
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -424,7 +424,7 @@ public final class ApplicationManifestUtilsTest {
                 .service("alpha-instance-2")
                 .build()));
 
-        List<String> expected = Files.readAllLines(new ClassPathResource("fixtures/manifest-echo.yml").getFile().toPath());
+        List<String> expected = Files.readAllLines(getClasspathResource("fixtures/manifest-echo.yml"));
         List<String> actual = Files.readAllLines(out);
 
         assertThat(actual).isEqualTo(expected);

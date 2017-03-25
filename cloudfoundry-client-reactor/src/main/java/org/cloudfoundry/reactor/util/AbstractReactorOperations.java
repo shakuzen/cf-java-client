@@ -22,7 +22,6 @@ import io.netty.util.AsciiString;
 import org.cloudfoundry.reactor.ConnectionContext;
 import org.cloudfoundry.reactor.TokenProvider;
 import org.reactivestreams.Publisher;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClientRequest;
 import reactor.ipc.netty.http.client.HttpClientResponse;

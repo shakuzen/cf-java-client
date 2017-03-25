@@ -37,7 +37,6 @@ import org.cloudfoundry.reactor.TestRequest;
 import org.cloudfoundry.reactor.TestResponse;
 import org.cloudfoundry.reactor.client.AbstractClientApiTest;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -296,7 +295,7 @@ public final class ReactorBuildpacksTest extends AbstractClientApiTest {
 
         this.buildpacks
             .upload(UploadBuildpackRequest.builder()
-                .buildpack(new ClassPathResource("fixtures/client/v2/buildpacks/test-buildpack.zip").getFile().toPath())
+                .buildpack(getClasspathResource("fixtures/client/v2/buildpacks/test-buildpack.zip"))
                 .buildpackId("test-buildpack-id")
                 .filename("test-filename")
                 .build())

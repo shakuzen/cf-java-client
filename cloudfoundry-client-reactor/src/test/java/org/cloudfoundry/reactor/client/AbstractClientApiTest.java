@@ -18,12 +18,16 @@ package org.cloudfoundry.reactor.client;
 
 import okhttp3.Headers;
 import org.cloudfoundry.reactor.AbstractRestTest;
+import reactor.core.Exceptions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +58,14 @@ public abstract class AbstractClientApiTest extends AbstractRestTest {
             return out.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    protected static Path getClasspathResource(String path) {
+        try {
+            return Paths.get(ClassLoader.getSystemResource(path).toURI());
+        } catch (URISyntaxException e) {
+            throw Exceptions.propagate(e);
         }
     }
 

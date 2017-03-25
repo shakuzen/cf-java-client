@@ -48,21 +48,17 @@ import org.cloudfoundry.uaa.UaaClient;
 import org.cloudfoundry.uaa.authorizations.Authorizations;
 import org.cloudfoundry.uaa.tokens.Tokens;
 import org.junit.Before;
-import reactor.core.publisher.Mono;
+import reactor.core.Exceptions;
+
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static org.mockito.Mockito.RETURNS_SMART_NULLS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractOperationsTest {
-
-    protected static final Mono<String> MISSING_ID = Mono.error(new java.lang.IllegalStateException("MISSING_ID"));
-
-    protected static final Mono<String> MISSING_ORGANIZATION_ID = Mono.error(new java.lang.IllegalStateException("MISSING_ORGANIZATION_ID"));
-
-    protected static final Mono<String> MISSING_SPACE_ID = Mono.error(new java.lang.IllegalStateException("MISSING_SPACE_ID"));
-
-    protected static final Mono<String> MISSING_USERNAME = Mono.error(new java.lang.IllegalStateException("MISSING_USERNAME"));
 
     protected static final String TEST_ORGANIZATION_ID = "test-organization-id";
 
@@ -167,6 +163,14 @@ public abstract class AbstractOperationsTest {
 
         when(this.uaaClient.authorizations()).thenReturn(this.authorizations);
         when(this.uaaClient.tokens()).thenReturn(this.tokens);
+    }
+
+    protected static Path getClasspathResource(String path) {
+        try {
+            return Paths.get(ClassLoader.getSystemResource(path).toURI());
+        } catch (URISyntaxException e) {
+            throw Exceptions.propagate(e);
+        }
     }
 
 }

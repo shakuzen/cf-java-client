@@ -16,15 +16,17 @@
 
 package org.cloudfoundry.operations;
 
-import org.springframework.util.ReflectionUtils;
+import reactor.core.Exceptions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -105,21 +107,37 @@ public abstract class TestObjects {
         Set<String> builtGetters = getBuiltGetters(builderType);
 
         return getConfigurationMethods(builderType, builderMethods, builtGetters).stream()
-            .collect(() -> builder, (b, method) -> ReflectionUtils.invokeMethod(method, b, getConfiguredValue(method, modifier)), (a, b) -> {
+            .collect(() -> builder, (b, method) -> invokeMethod(method, b, getConfiguredValue(method, modifier)), (a, b) -> {
             });
     }
 
+    private static Method findMethod(Class<?> clazz, String name) {
+        Class<?> searchType = clazz;
+
+        while (searchType != null) {
+            for (Method method : searchType.getDeclaredMethods()) {
+                if (name.equals(method.getName())) {
+                    return method;
+                }
+            }
+
+            searchType = searchType.getSuperclass();
+        }
+
+        return null;
+    }
+
     private static Method getBuildMethod(Class<?> builderType) {
-        return ReflectionUtils.findMethod(builderType, "build");
+        return findMethod(builderType, "build");
     }
 
     private static Method getBuilderMethod(Class<?> builderType) {
-        return ReflectionUtils.findMethod(builderType, "builder");
+        return findMethod(builderType, "builder");
     }
 
     private static Set<String> getBuiltGetters(Class<?> builderType) {
         Class<?> builtType = getBuiltType(builderType);
-        return Arrays.stream(ReflectionUtils.getUniqueDeclaredMethods(builtType))
+        return getMethods(builtType).stream()
             .map(Method::getName)
             .filter(s -> s.startsWith("get"))
             .collect(Collectors.toSet());
@@ -139,10 +157,10 @@ public abstract class TestObjects {
     }
 
     private static Object getConfiguredBuilder(Class<?> parameterType, Optional<String> modifier) {
-        Object builder = ReflectionUtils.invokeMethod(getBuilderMethod(parameterType), null);
+        Object builder = invokeMethod(getBuilderMethod(parameterType), null);
         Method buildMethod = getBuildMethod(builder.getClass());
 
-        return ReflectionUtils.invokeMethod(buildMethod, fill(builder, modifier));
+        return invokeMethod(buildMethod, fill(builder, modifier));
     }
 
     private static Object getConfiguredEnum(Class<?> parameterType) {
@@ -186,8 +204,23 @@ public abstract class TestObjects {
         }
     }
 
-    private static List<Method> getMethods(Class<?> builderType) {
-        return Arrays.asList(ReflectionUtils.getUniqueDeclaredMethods(builderType));
+    private static List<Method> getMethods(Class<?> clazz) {
+        Map<String, Method> methods = new HashMap<>();
+
+        Class<?> searchType = clazz;
+        while (searchType != null) {
+            for (Method method : clazz.getDeclaredMethods()) {
+                String name = method.getName();
+
+                if (!methods.containsKey(name)) {
+                    methods.put(name, method);
+                }
+            }
+
+            searchType = searchType.getSuperclass();
+        }
+
+        return new ArrayList<>(methods.values());
     }
 
     private static Parameter getParameter(Method method) {
@@ -202,6 +235,14 @@ public abstract class TestObjects {
 
     private static boolean hasSingleParameter(Method method) {
         return 1 == method.getParameterCount();
+    }
+
+    private static Object invokeMethod(Method method, Object target, Object... args) {
+        try {
+            return method.invoke(target, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw Exceptions.propagate(e);
+        }
     }
 
     private static boolean isBuilderType(Class<?> aType) {

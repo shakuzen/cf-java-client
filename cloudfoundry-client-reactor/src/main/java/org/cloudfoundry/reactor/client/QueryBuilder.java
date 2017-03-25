@@ -18,7 +18,7 @@ package org.cloudfoundry.reactor.client;
 
 import org.cloudfoundry.QueryParameter;
 import org.cloudfoundry.reactor.util.AnnotationUtils;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.cloudfoundry.reactor.util.UriComponentsBuilder;
 import reactor.core.Exceptions;
 
 import java.lang.reflect.InvocationTargetException;

@@ -48,7 +48,6 @@ import org.cloudfoundry.reactor.client.AbstractClientApiTest;
 import org.cloudfoundry.util.FluentMap;
 import org.cloudfoundry.util.OperationUtils;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -435,7 +434,7 @@ public final class ReactorPackagesTest extends AbstractClientApiTest {
 
         this.packages
             .upload(UploadPackageRequest.builder()
-                .bits(new ClassPathResource("fixtures/client/v3/packages/test-package.zip").getFile().toPath())
+                .bits(getClasspathResource("fixtures/client/v3/packages/test-package.zip"))
                 .packageId("test-package-id")
                 .build())
             .as(StepVerifier::create)

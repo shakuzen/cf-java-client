@@ -21,7 +21,6 @@ import okhttp3.mockwebserver.MockResponse;
 import okio.Buffer;
 import org.cloudfoundry.AllowNulls;
 import org.immutables.value.Value;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.util.Map;
@@ -57,7 +56,7 @@ abstract class _TestResponse {
 
     private static Buffer getBuffer(String path) {
         try {
-            return new Buffer().readFrom(new ClassPathResource(path).getInputStream());
+            return new Buffer().readFrom(ClassLoader.getSystemResourceAsStream(path));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

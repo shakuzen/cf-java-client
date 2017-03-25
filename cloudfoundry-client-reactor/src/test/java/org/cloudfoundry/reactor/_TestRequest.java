@@ -24,7 +24,6 @@ import okhttp3.mockwebserver.RecordedRequest;
 import okio.Buffer;
 import org.cloudfoundry.AllowNulls;
 import org.immutables.value.Value;
-import org.springframework.core.io.ClassPathResource;
 import reactor.core.Exceptions;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -48,7 +47,7 @@ abstract class _TestRequest {
 
     public static Buffer getBuffer(String path) {
         try {
-            return new Buffer().readFrom(new ClassPathResource(path).getInputStream());
+            return new Buffer().readFrom(ClassLoader.getSystemResourceAsStream(path));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

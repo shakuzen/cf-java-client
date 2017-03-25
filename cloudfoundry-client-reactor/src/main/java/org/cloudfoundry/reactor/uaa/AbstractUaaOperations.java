@@ -21,7 +21,7 @@ import org.cloudfoundry.reactor.TokenProvider;
 import org.cloudfoundry.reactor.client.QueryBuilder;
 import org.cloudfoundry.reactor.util.AbstractReactorOperations;
 import org.cloudfoundry.reactor.util.ErrorPayloadMapper;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.cloudfoundry.reactor.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.http.client.HttpClientRequest;
 import reactor.ipc.netty.http.client.HttpClientResponse;

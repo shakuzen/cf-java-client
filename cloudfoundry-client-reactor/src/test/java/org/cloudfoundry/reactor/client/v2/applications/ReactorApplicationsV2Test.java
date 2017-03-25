@@ -74,7 +74,6 @@ import org.cloudfoundry.reactor.client.AbstractClientApiTest;
 import org.cloudfoundry.util.FluentMap;
 import org.cloudfoundry.util.OperationUtils;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
@@ -988,7 +987,7 @@ public final class ReactorApplicationsV2Test extends AbstractClientApiTest {
 
         this.applications
             .upload(UploadApplicationRequest.builder()
-                .application(new ClassPathResource("fixtures/client/v2/apps/test-application.zip").getFile().toPath())
+                .application(getClasspathResource("fixtures/client/v2/apps/test-application.zip"))
                 .applicationId("test-application-id")
                 .resource(Resource.builder()
                     .hash("b907173290db6a155949ab4dc9b2d019dea0c901")

@@ -19,7 +19,7 @@ package org.cloudfoundry.reactor.client.v3;
 import org.cloudfoundry.client.v3.FilterParameter;
 import org.cloudfoundry.reactor.client.MethodNameComparator;
 import org.cloudfoundry.reactor.util.AnnotationUtils;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.cloudfoundry.reactor.util.UriComponentsBuilder;
 import reactor.core.Exceptions;
 
 import java.lang.reflect.InvocationTargetException;

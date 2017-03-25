@@ -22,13 +22,16 @@ import org.cloudfoundry.client.v2.ClientV2Exception;
 import org.cloudfoundry.client.v3.ClientV3Exception;
 import org.cloudfoundry.uaa.UaaException;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
+import reactor.core.Exceptions;
 import reactor.core.publisher.Mono;
 import reactor.ipc.netty.ByteBufFlux;
 import reactor.ipc.netty.http.client.HttpClientResponse;
 import reactor.test.StepVerifier;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -48,7 +51,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void clientV2BadPayload() throws IOException {
         when(this.response.status()).thenReturn(BAD_REQUEST);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/invalid_error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/invalid_error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.clientV2(this.objectMapper))
@@ -64,7 +67,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void clientV2ClientError() throws IOException {
         when(this.response.status()).thenReturn(BAD_REQUEST);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/client/v2/error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/client/v2/error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.clientV2(this.objectMapper))
@@ -92,7 +95,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void clientV2ServerError() throws IOException {
         when(this.response.status()).thenReturn(INTERNAL_SERVER_ERROR);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/client/v2/error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/client/v2/error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.clientV2(this.objectMapper))
@@ -108,7 +111,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void clientV3BadPayload() throws IOException {
         when(this.response.status()).thenReturn(BAD_REQUEST);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/invalid_error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/invalid_error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.clientV3(this.objectMapper))
@@ -124,7 +127,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void clientV3ClientError() throws IOException {
         when(this.response.status()).thenReturn(BAD_REQUEST);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/client/v3/error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/client/v3/error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.clientV3(this.objectMapper))
@@ -158,7 +161,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void clientV3ServerError() throws IOException {
         when(this.response.status()).thenReturn(INTERNAL_SERVER_ERROR);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/client/v3/error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/client/v3/error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.clientV3(this.objectMapper))
@@ -181,7 +184,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void uaaBadPayload() throws IOException {
         when(this.response.status()).thenReturn(BAD_REQUEST);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/invalid_error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/invalid_error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.uaa(this.objectMapper))
@@ -197,7 +200,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void uaaClientError() throws IOException {
         when(this.response.status()).thenReturn(BAD_REQUEST);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/uaa/error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/uaa/error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.uaa(this.objectMapper))
@@ -225,7 +228,7 @@ public final class ErrorPayloadMapperTest {
     @Test
     public void uaaServerError() throws IOException {
         when(this.response.status()).thenReturn(INTERNAL_SERVER_ERROR);
-        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(new ClassPathResource("fixtures/uaa/error_response.json").getFile().toPath()));
+        when(this.response.receive()).thenReturn(ByteBufFlux.fromPath(getClasspathResource("fixtures/uaa/error_response.json")));
 
         Mono.just(this.response)
             .transform(ErrorPayloadMapper.uaa(this.objectMapper))
@@ -236,6 +239,14 @@ public final class ErrorPayloadMapperTest {
                 .extracting("statusCode", "error", "errorDescription")
                 .containsExactly(INTERNAL_SERVER_ERROR.code(), "unauthorized", "Bad credentials"))
             .verify(Duration.ofSeconds(1));
+    }
+
+    private static Path getClasspathResource(String path) {
+        try {
+            return Paths.get(ClassLoader.getSystemResource(path).toURI());
+        } catch (URISyntaxException e) {
+            throw Exceptions.propagate(e);
+        }
     }
 
 }

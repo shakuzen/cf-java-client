@@ -108,7 +108,6 @@ import org.cloudfoundry.util.DateUtils;
 import org.cloudfoundry.util.FluentMap;
 import org.cloudfoundry.util.ResourceMatchingUtils;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -1122,7 +1121,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushDomainNotFound() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1149,7 +1148,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushExistingApplication() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplications(this.cloudFoundryClient, "test-name", TEST_SPACE_ID, "test-application-id");
         requestUpdateApplication(this.cloudFoundryClient, "test-application-id", PushApplicationRequest.builder()
@@ -1184,7 +1183,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushExistingRouteWithHost() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1220,7 +1219,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushExistingRouteWithNoHost() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1256,7 +1255,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushInvalidStack() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestStackIdEmpty(this.cloudFoundryClient, "invalid-stack");
 
@@ -1273,7 +1272,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNewApplication() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1308,7 +1307,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNewRouteWithHost() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1345,7 +1344,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNewRouteWithNoHost() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1382,7 +1381,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNoDomainNoneFound() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1407,7 +1406,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNoDomainPrivate() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1441,7 +1440,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNoDomainShared() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1474,7 +1473,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNoRoute() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1506,7 +1505,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushNoStart() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1538,7 +1537,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushRandomRoute() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1576,7 +1575,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushSharedDomain() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1612,7 +1611,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushStartFailsRunning() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1647,7 +1646,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushStartFailsStaging() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
@@ -1681,7 +1680,7 @@ public final class DefaultApplicationsTest extends AbstractOperationsTest {
 
     @Test
     public void pushUploadFails() throws IOException {
-        Path testApplication = new ClassPathResource("test-application.zip").getFile().toPath();
+        Path testApplication = getClasspathResource("test-application.zip");
 
         requestApplicationsEmpty(this.cloudFoundryClient, "test-name", TEST_SPACE_ID);
         requestCreateApplication(this.cloudFoundryClient, PushApplicationRequest.builder()
