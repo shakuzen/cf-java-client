@@ -26,8 +26,21 @@ public final class ApplicationManifestTest {
     public void dockerAndPath() {
         ApplicationManifest.builder()
             .name("test-name")
-            .dockerImage("test-docker-image")
+            .docker(Docker.builder()
+                .image("test-docker-image")
+                .build())
             .path(Paths.get("test-application"))
+            .build();
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void dockerCredentialsNoImage() {
+        ApplicationManifest.builder()
+            .name("test-name")
+            .docker(Docker.builder()
+                .password("test-password")
+                .username("test-username")
+                .build())
             .build();
     }
 

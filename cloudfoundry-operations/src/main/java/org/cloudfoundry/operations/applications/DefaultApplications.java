@@ -333,7 +333,11 @@ public final class DefaultApplications implements Applications {
             .buildpack(request.getBuildpack())
             .command(request.getCommand())
             .disk(request.getDiskQuota())
-            .dockerImage(request.getDockerImage())
+            .docker(Docker.builder()
+                .image(request.getDockerImage())
+                .password(request.getDockerPassword())
+                .username(request.getDockerUsername())
+                .build())
             .healthCheckType(request.getHealthCheckType())
             .instances(request.getInstances())
             .memory(request.getMemory())
@@ -356,6 +360,8 @@ public final class DefaultApplications implements Applications {
 
         return pushManifest(PushApplicationManifestRequest.builder()
             .manifest(builder.build())
+            .dockerPassword(request.getDockerPassword())
+            .dockerUsername(request.getDockerUsername())
             .noStart(request.getNoStart())
             .stagingTimeout(request.getStagingTimeout())
             .startupTimeout(request.getStartupTimeout())
@@ -381,7 +387,7 @@ public final class DefaultApplications implements Applications {
                 .flatMap(manifest -> {
                     if (manifest.getPath() != null) {
                         return pushApplication(cloudFoundryClient, availableDomains, manifest, this.randomWords, request, spaceId);
-                    } else if (!manifest.getDockerImage().isEmpty()) {
+                    } else if (!manifest.getDocker().getImage().isEmpty()) {
                         return pushDocker(cloudFoundryClient, availableDomains, manifest, this.randomWords, request, spaceId);
                     } else {
                         throw new IllegalStateException("One of application or dockerImage must be supplied");
@@ -1173,10 +1179,17 @@ public final class DefaultApplications implements Applications {
             .spaceId(spaceId)
             .stackId(stackId);
 
-        Optional.ofNullable(manifest.getDockerImage())
-            .ifPresent(dockerImage -> builder
-                .diego(true)
-                .dockerImage(dockerImage));
+        Optional.ofNullable(manifest.getDocker())
+            .ifPresent(docker -> {
+                builder
+                    .diego(true)
+                    .dockerImage(docker.getImage());
+
+                Optional.ofNullable(manifest.getDocker().getUsername())
+                    .ifPresent(username -> builder
+                        .dockerCredentialsJson(username, manifest.getDocker().getPassword()));
+            });
+
 
         return cloudFoundryClient.applicationsV2()
             .create(builder.build());
@@ -1424,10 +1437,11 @@ public final class DefaultApplications implements Applications {
                 .name(manifest.getName())
                 .stackId(stackId);
 
-            Optional.ofNullable(manifest.getDockerImage())
+            Optional.ofNullable(manifest.getDocker().getImage())
                 .ifPresent(dockerImage -> builder
                     .diego(true)
-                    .dockerImage(dockerImage));
+                    .dockerImage(dockerImage)
+                    .dockerCredentialsJson(manifest.getDocker().getUsername(), manifest.getDocker().getPassword()));
 
             return builder;
         });
